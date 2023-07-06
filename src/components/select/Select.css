@@ -1,0 +1,17 @@
+.label-filter {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    flex-direction: column;
+    display: flex;
+}
+  
+.select-filter {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    border: 1px solid;
+    width: 250px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 2px 2px gray;
+}

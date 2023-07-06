@@ -1,0 +1,37 @@
+.filter {
+    display: flex;
+    width: 300px;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2%;
+    box-shadow: 5px 5px 5px 5px gray;
+    border-radius: 10px;
+    margin: 1em;
+}
+
+.filter h1{
+    font-size: 25px;
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+.filtr-block-btn {
+    width: 100%;
+
+    display: flex;
+    /* justify-content: space-between; */
+}
+
+
+.button-filter {
+    width: 120px;
+    height: 40px;
+    background-color: #007bff;
+    color: white;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 7px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}

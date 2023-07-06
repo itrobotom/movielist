@@ -1,0 +1,10 @@
+.label-genre {
+    margin-left: 10px;
+}
+
+.chek-genre {
+    margin-bottom: 10px;
+    margin-left: 20px; 
+    display: flex;
+    align-items: flex-start;
+}
