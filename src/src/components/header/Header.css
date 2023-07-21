@@ -1,0 +1,23 @@
+.header {
+    border: 1px solid;
+    justify-content: space-between;
+    display: flex;
+    background-color: rgb(200, 201, 208);
+}
+.button-home {
+    color: rgb(255, 255, 255);
+    background: none;
+    font-size: 25px;
+    margin: 10px 0 10px 15%;
+}
+  
+.button-login {
+    margin: 10px 15% 10px 0;
+    width: 100px;
+    color: rgb(255, 255, 255);
+    background-color: #007bff;
+    font-size: 17px;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
