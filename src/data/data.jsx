@@ -1,6 +1,10 @@
-const categories = ['Популярные по возрастанию', 'Популярные по убыванию', 'По году релиза'];
+const categories = ['Рейтингу', 'Популярности'];
+const DEFAULT_FILTR = {CATEGORY: 'Популярные по возрастанию', YEAR: 2023, GENRE: 'боевик'};
 
 const years = getYears();
+const imagesAdress ={
+    onePic: '../media/one_pic.png'
+}
 
 function getYears() {
     const years = {
@@ -25,4 +29,4 @@ const genre = [
     { name: "мультфильм", id: 6 },
 ];
 
-export {categories, years, genre}
+export {categories, years, genre, DEFAULT_FILTR, imagesAdress}

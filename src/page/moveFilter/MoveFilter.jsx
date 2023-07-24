@@ -1,29 +1,43 @@
 import React, { useState, useEffect, useReducer } from "react";
-import CheckGenre from "../../components/checkGenre/CheckGenre";
 import Pagination from "../../components/pagination/Pagination";
-import {Select} from "../../components/select/Select"
-import {categories, years} from '../../data/data'
+import { categories } from '../../data/data'
 import {RequestGenre} from '../../components/Network';
 import { token } from "../../components/token";
+import { FilterContext } from "../../components/Context";
 import './MoveFilter.css';
+import { SliderYears } from "../../components/sliderYears/SliderYears";
+import { CheckGenre } from "../../components/checkGenre/CheckGenre";
+// MUI
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import Typography from "@mui/material/Typography";
+import Box from '@mui/material/Box';
+import { SelectChangeEvent } from '@mui/material/Select';
+import { SelectSort } from "../../components/selectSort/SelectSort";
 
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 function MoveFilter() {
   //можно завести через диспатч в общий юсредьюс и добавить в большой стейт иеще и массив с жанрами
-  const [genres, setGenries] = useState([]); //храним данные с сервера в genries
+  const [genres, setGenries] = useState(null); //храним данные с сервера в genries, по умолчанию лучше null, чем [] пустой массив
   const [isGetGenre, setIsGetGenre] = useState(false);
 
   //переменная состояния для хранения числа, которе будет использовано для создания ключа каждому блоку с фильтром
   const [keyResetFilter, setKeyResetFiltr] = useState(0);
 
   let initialFilter = {
-    selectSort: 'Популярные по убыванию',
-    selectYear: '2022',
+    selectSort: 'Рейтингу',
+    selectYear: [1960, 2023],
     selectedGenresIds: [],
   };//['Популярные по убыванию', '2022', []]
   
   const [stateFilter, dispatch] = useReducer(stateFilterReduсer, initialFilter);
 
+  //!!!ЧТОБЫ сократить размер файла, можно перенести редьюсер в отдельный файл
   function stateFilterReduсer(stateFilter, action) {
     switch (action.type) {
       case 'setSelectSort' : {
@@ -45,32 +59,20 @@ function MoveFilter() {
         };
       }
       default:
-        return stateFilter;
+        return {...stateFilter};
     }
   }
 
-  useEffect(() => { //запрос данных только после рендера всей страницы
-    RequestGenre(token)
-      .then((jsonGenre) => {
-        console.log('Данные по жанрам с сервера'); //`Данные по жанрам с сервера ${jsonGenre.genres}` При преобразовании массива объектов в строку с помощью шаблонных строк (``), каждый объект преобразуется в строку "[object Object]".
-        //Чтобы вывести содержимое объектов в виде читаемых значений, можно использовать метод JSON.stringify() с параметром null для отступов. 
-        //Это преобразует объекты в строку JSON с отступами, делая их более читаемыми.
-        //2 - количество отступов 
-        console.log(JSON.stringify(jsonGenre.genres, null, 2));
-        setGenries(jsonGenre.genres); //сохранили жанры, пришедшие с сервера
-        setIsGetGenre(true);
-      })
-  }, []); //пустой массив чтобы перерендер не зациклился
-  
-  function handleChangeSelectSort(selectSort) {
+  const handleChangeSelectSort = (event: SelectChangeEvent) => {
     dispatch({
-      type: 'setSelectSort',
-      newSort: selectSort
-    });
-    console.log(selectSort);
-  }
+        type: 'setSelectSort',
+        newSort: event.target.value
+      });
+      console.log(event.target.value);
+  };
 
-  function handleChangeSelectYear(selectYear) {
+
+  function handleChangeValueYears(event, selectYear) {
     dispatch({
       type: 'setSelectYear',
       newYear: selectYear
@@ -79,6 +81,7 @@ function MoveFilter() {
   }
 
   //создаем и обновляем массив id элементов с выбранными элементами из списка жанров
+
   function handleChangeItem(nextGenre){
     const updatedSelectedIds = [...stateFilter.selectedGenresIds]; //создаем новый массив updatedSelectedIds, который копирует элементы из соответсвующего поля стейта.
                                                                   //т.к. далее используется метод splice, вызывающий мутацию. Потом мы на основе новых данных обновим стейт
@@ -107,36 +110,50 @@ function MoveFilter() {
     console.log(`Переменные состояния после сброса фильтров ${stateFilter.selectSort} и ${stateFilter.selectYear} и ${stateFilter.selectedGenresIds}`);
   }
 
+  useEffect(() => { //запрос данных только после рендера всей страницы
+    RequestGenre(token)
+      .then((jsonGenre) => {
+        console.log('Данные по жанрам с сервера'); //`Данные по жанрам с сервера ${jsonGenre.genres}` При преобразовании массива объектов в строку с помощью шаблонных строк (``), каждый объект преобразуется в строку "[object Object]".
+        //Чтобы вывести содержимое объектов в виде читаемых значений, можно использовать метод JSON.stringify() с параметром null для отступов. 
+        //Это преобразует объекты в строку JSON с отступами, делая их более читаемыми.
+        //2 - количество отступов 
+        console.log(JSON.stringify(jsonGenre.genres, null, 2));
+        setGenries(jsonGenre.genres); //сохранили жанры, пришедшие с сервера
+        setIsGetGenre(true);
+      })
+  }, []); //пустой массив чтобы перерендер не зациклился
+
   //console.log(genres);
   return (
-    <div className="filter">
-      <h1>Фильтры:</h1>
-      <div className="filtr-block-btn">
-        <button className="button-filter" onClick={resetFiltr}>Сбросить</button>
-        <button className="button-filter">Применить</button>
+    <FilterContext.Provider value={stateFilter}>
+      <div className="filter">
+        <Box
+          m="50px"
+        >
+          <Box
+            sx={{width: '104%', display: 'flex', justifyContent: 'space-between'}}
+          >
+            <Typography ml='0px' color="#007bff" variant="h5" gutterBottom>Фильтры:</Typography>
+            <IconButton aria-label="add"
+              // sx={{ mt: 2, ml: 2 }}
+              onClick={resetFiltr}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <SelectSort valueFilter = {stateFilter.selectSort} onChange = {handleChangeSelectSort} categories = {categories}/>
+          <SliderYears valueYears={stateFilter.selectYear} onChange={handleChangeValueYears}/>
+          {isGetGenre && <CheckGenre
+            key={`${keyResetFilter}`} 
+            genres={genres}
+            selectedGenresIds={stateFilter.selectedGenresIds} // Передаем selectedGenresIds в CheckGenre
+            onChangeItem={handleChangeItem}
+          />} 
+          <Pagination />
+        </Box>   
       </div>
-      <Select 
-        key={`${keyResetFilter}${stateFilter.selectSort}`} 
-        headerSelect = {'Сортировать по:'} 
-        options = {categories} 
-        onChangeSelect={handleChangeSelectSort} 
-        defaultValue = {stateFilter.selectSort}>
-      </Select>
-      <Select 
-        key={`${keyResetFilter}${stateFilter.selectYear}`}
-        headerSelect = {'Год релиза:'} 
-        options = {years} 
-        onChangeSelect={handleChangeSelectYear} 
-        defaultValue = {stateFilter.selectYear}>
-      </Select>
-      {isGetGenre && <CheckGenre
-        key={`${keyResetFilter}`} 
-        genres={genres}
-        selectedGenresIds={stateFilter.selectedGenresIds} // Передаем selectedGenresIds в CheckGenre
-        onChangeItem={handleChangeItem}
-      />}     
-      <Pagination />
-    </div>
+    </FilterContext.Provider>
+    
   );
 }
 

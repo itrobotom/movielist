@@ -1,12 +1,20 @@
 import './Select.css'
+import { useContext } from 'react';
+import { FilterContext } from '../Context';
+import {categories, years} from '../../data/data'
 
 
 export function Select( {
   headerSelect, 
   options,
-  onChangeSelect,
-  defaultValue
+  onChangeSelect
 } ) {
+  
+  const value = useContext(FilterContext); //достаем value из родителя, что там передали - объект stateFilter
+  
+  //можно брать данные из контекста в зависимости от options, тогда и dispatch можно тоже вернуть, и будет полноценное масштабирование
+  let currentValue = '';
+  options === categories ? currentValue =  value.selectSort : currentValue =  value.selectYear;
   return (
     <label className="label-filter">
       {headerSelect} 
@@ -18,7 +26,7 @@ export function Select( {
       onChangeSelect с выбранным значением в качестве аргумента, чтобы передать это значение обратно в родительский компонент
       */}
       <select 
-        value={defaultValue} 
+        value={currentValue} 
         className="select-filter" 
         name="sort" 
         id="sort-select" 
