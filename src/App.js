@@ -1,28 +1,48 @@
-import React from "react";
+import { React, useState } from "react";
 import Header from "./components/header/Header";
 import MoveFilter from "./page/moveFilter/MoveFilter";
 import CardFilm from "./page/cardFilm/CardFilm";
 import './App.css'
-// Импортируем изображения
-import onePic from ".//media/one_pic.png"; 
-import twoPic from ".//media/two_pic.png";
-import threePic from ".//media/three_pic.png";
-import fourPic from ".//media/four_pic.png";
 
 function App() {
+  const [movies, setMovies] = useState(null); //храним данные с сервера будет объект
+  const [isLoadDataCards, setIsLoadDataCards] = useState(false);
+  const [page, setPage] = useState(1);
+
+  //обязательно нужно предусмотреть рендер только после ответа серевера
+  // Если данные еще загружаются, отобразить загрузочный индикатор или сообщение о загрузке
+  if (!isLoadDataCards) { 
+    return (
+      <>
+        <Header />
+        <div className="filtr-cards_film">
+          <div className="move-filter-container">
+            <MoveFilter movies={movies} setMovies={setMovies} setIsLoadDataCards = {setIsLoadDataCards}/>
+          </div>
+          {/* добавить спиннер */}
+          /*<div>Loading...</div>
+        </div>
+        
+      </>
+    )
+  }
+  
   return (
     <>
       <Header />
       <div className="filtr-cards_film">
         <div className="move-filter-container">
-          <MoveFilter />
+          <MoveFilter movies={movies} setMovies={setMovies} setIsLoadDataCards = {setIsLoadDataCards} page = {page} setPage = {setPage}/>
         </div>
+        
+        {/* теперь в movies есть все данные, пришедшие с сервера, чтобы вывести карточки фильмов */}
         <div className="cards-container">
-          <CardFilm img = {fourPic}/> 
-          <CardFilm img = {onePic}/>
-          <CardFilm img = {twoPic}/>
-          <CardFilm img = {threePic}/>
-        </div>  
+          {movies.results.map((movie) => (
+            <div key={movie.id}>
+              <CardFilm movie = {movie}/>
+            </div>
+          ))}
+        </div>
       </div>
       
     </>

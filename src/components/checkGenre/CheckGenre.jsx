@@ -17,6 +17,7 @@ export function CheckGenre({ genres, selectedGenresIds, onChangeItem }) {
       options={genres}
       disableCloseOnSelect
       getOptionLabel={(option) => option.name}
+      sx={{ mt: 3 }}
       renderOption={(props, option, { selected }) => (
         <li {...props}>
           <Checkbox

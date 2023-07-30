@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useReducer } from "react";
-import Pagination from "../../components/pagination/Pagination";
+import AllPagination from "../../components/allPagination/AllPagination";
 import { categories } from '../../data/data'
-import {RequestGenre} from '../../components/Network';
+import {RequestGenre, getRatingMoves, getPopularMoves} from '../../components/Network';
 import { token } from "../../components/token";
 import { FilterContext } from "../../components/Context";
 import './MoveFilter.css';
@@ -15,22 +15,19 @@ import Box from '@mui/material/Box';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { SelectSort } from "../../components/selectSort/SelectSort";
 
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
-
-function MoveFilter() {
+function MoveFilter({ movies, setMovies, setIsLoadDataCards, page, setPage }) {
   //можно завести через диспатч в общий юсредьюс и добавить в большой стейт иеще и массив с жанрами
   const [genres, setGenries] = useState(null); //храним данные с сервера в genries, по умолчанию лучше null, чем [] пустой массив
   const [isGetGenre, setIsGetGenre] = useState(false);
-
-  //переменная состояния для хранения числа, которе будет использовано для создания ключа каждому блоку с фильтром
+  
+  //переменная состояния для хранения числа, которое будет использовано для создания ключа каждому блоку с фильтром
   const [keyResetFilter, setKeyResetFiltr] = useState(0);
 
-  let initialFilter = {
-    selectSort: 'Рейтингу',
+  const defaultPage = 1;
+
+  const initialFilter = {
+    selectSort: 'Популярности',
     selectYear: [1960, 2023],
     selectedGenresIds: [],
   };//['Популярные по убыванию', '2022', []]
@@ -63,7 +60,7 @@ function MoveFilter() {
     }
   }
 
-  const handleChangeSelectSort = (event: SelectChangeEvent) => {
+  const handleChangeSelectSort = (event) => {
     dispatch({
         type: 'setSelectSort',
         newSort: event.target.value
@@ -107,10 +104,11 @@ function MoveFilter() {
     dispatch({type: 'setSelectYear', newYear: initialFilter.selectYear})
     //при выводе мы видим, что сами переменные на странице изменились, а в консоли вывелись старые данные при первом клике на сброс, а при втором обновились как положено...
     dispatch({ type: 'setChangeGenre', updateIdGenre: initialFilter.selectedGenresIds})
+    setPage(defaultPage);
     console.log(`Переменные состояния после сброса фильтров ${stateFilter.selectSort} и ${stateFilter.selectYear} и ${stateFilter.selectedGenresIds}`);
   }
 
-  useEffect(() => { //запрос данных только после рендера всей страницы
+  useEffect(() => { //запрос данных только после рендера всей страницы каркаса, куда мы будем размещать данные (жанры, карточки с фильмами)
     RequestGenre(token)
       .then((jsonGenre) => {
         console.log('Данные по жанрам с сервера'); //`Данные по жанрам с сервера ${jsonGenre.genres}` При преобразовании массива объектов в строку с помощью шаблонных строк (``), каждый объект преобразуется в строку "[object Object]".
@@ -123,6 +121,27 @@ function MoveFilter() {
       })
   }, []); //пустой массив чтобы перерендер не зациклился
 
+  useEffect(() => {
+    if(stateFilter.selectSort === 'Популярности'){
+      getPopularMoves(page)
+        .then((json) => {
+          console.log(JSON.stringify(json, null, 2));
+          //СОХРАНИТЬ ОБЪЕКТ С ФИЛЬМАМИ В СТЕЙТ ОТОБРАЖАЕМХ ФИЛЬМОВ. СТЕЙТ ДОЛЖЕН БЫТЬ В РОДИТЕЛЕ APP.JS, ТАМ ЖЕ МЫ И СПУСКАЕМ ДАННЫЕ ВНУТРЬ КАРТОЧЕК
+          setMovies(json);
+          setIsLoadDataCards(true); //данные загружены, меняем флаг из App.js
+        })
+    } else { // значит по рейтингу (всего два типа фильтров)
+      getRatingMoves(page)
+        .then((json) => {
+          console.log(JSON.stringify(json, null, 2));
+          //СОХРАНИТЬ ОБЪЕКТ С ФИЛЬМАМИ В СТЕЙТ ОТОБРАЖАЕМХ ФИЛЬМОВ
+          setMovies(json);
+          setIsLoadDataCards(true); //данные загружены, меняем флаг из App.js
+        })
+    }
+    // Включаем зависимость stateFilter.selectSort
+  }, [stateFilter.selectSort, page]); // Добавляем stateFilter.selectSort в массив зависимостей
+
   //console.log(genres);
   return (
     <FilterContext.Provider value={stateFilter}>
@@ -131,7 +150,7 @@ function MoveFilter() {
           m="50px"
         >
           <Box
-            sx={{width: '104%', display: 'flex', justifyContent: 'space-between'}}
+            sx={{width: '250px', mb: 3, display: 'flex', justifyContent: 'space-between'}}
           >
             <Typography ml='0px' color="#007bff" variant="h5" gutterBottom>Фильтры:</Typography>
             <IconButton aria-label="add"
@@ -149,7 +168,7 @@ function MoveFilter() {
             selectedGenresIds={stateFilter.selectedGenresIds} // Передаем selectedGenresIds в CheckGenre
             onChangeItem={handleChangeItem}
           />} 
-          <Pagination />
+          <AllPagination page={page} setPage={setPage} />
         </Box>   
       </div>
     </FilterContext.Provider>

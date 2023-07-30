@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 
 export function SliderYears({ valueYears, onChange }) {
   return (
-    <Box sx={{ mt: 3}}>
+    <Box sx={{ mt: 5 }}>
       <Typography gutterBottom>
         Год релиза 1960-2023
       </Typography>
