@@ -20,9 +20,6 @@ export default AllPagination;
 
 
 
-
-
-
 //Пагинация вручную без применения MUI
 
 // function AllPagination() {

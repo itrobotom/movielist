@@ -1,10 +1,18 @@
 import './Header.css'
+import InputIcon from '@mui/icons-material/Input';
+import IconButton from '@mui/material/IconButton';
 
-function Header() {
+function Header({head}) {
   return (
     <div className="header">
-      <button className="button-home">Домашняя</button>
-      <button className="button-login">Войти</button>
+      <button className="button-home">{head}</button>
+      {/* Поменять войти на иконку */}
+      <IconButton aria-label="add"
+        sx={{ mr: 20}}
+        //onClick={resetFiltr}
+      >
+        <InputIcon />
+      </IconButton>
     </div>
   );
 }

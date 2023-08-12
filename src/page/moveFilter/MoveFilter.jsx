@@ -2,7 +2,7 @@ import React, { useState, useEffect, useReducer } from "react";
 import AllPagination from "../../components/allPagination/AllPagination";
 import { categories } from '../../data/data'
 import {RequestGenre, getRatingMoves, getPopularMoves} from '../../components/Network';
-import { token } from "../../components/token";
+//import { token } from "../../components/token";
 import { FilterContext } from "../../components/Context";
 import './MoveFilter.css';
 import { SliderYears } from "../../components/sliderYears/SliderYears";
@@ -12,7 +12,6 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from "@mui/material/Typography";
 import Box from '@mui/material/Box';
-import { SelectChangeEvent } from '@mui/material/Select';
 import { SelectSort } from "../../components/selectSort/SelectSort";
 
 
@@ -109,16 +108,22 @@ function MoveFilter({ movies, setMovies, setIsLoadDataCards, page, setPage }) {
   }
 
   useEffect(() => { //запрос данных только после рендера всей страницы каркаса, куда мы будем размещать данные (жанры, карточки с фильмами)
-    RequestGenre(token)
+    RequestGenre()
       .then((jsonGenre) => {
+        
         console.log('Данные по жанрам с сервера'); //`Данные по жанрам с сервера ${jsonGenre.genres}` При преобразовании массива объектов в строку с помощью шаблонных строк (``), каждый объект преобразуется в строку "[object Object]".
         //Чтобы вывести содержимое объектов в виде читаемых значений, можно использовать метод JSON.stringify() с параметром null для отступов. 
         //Это преобразует объекты в строку JSON с отступами, делая их более читаемыми.
         //2 - количество отступов 
         console.log(JSON.stringify(jsonGenre.genres, null, 2));
         setGenries(jsonGenre.genres); //сохранили жанры, пришедшие с сервера
+        
         setIsGetGenre(true);
       })
+      .catch((error) => {
+        // Обработка ошибок, например, вывод в консоль
+        console.log('Ошибка получения жанров:', error);
+    });
   }, []); //пустой массив чтобы перерендер не зациклился
 
   useEffect(() => {

@@ -4,5 +4,35 @@ import App from "./App";
 import "./style/reset.css";
 import "./style/App.css";
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
+import { MoveDescription } from "./page/moveDescription/MoveDescription";
+import { getMoveDescription } from "./components/Network"
+
+//роутер
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+
+import ErrorPage from "./components/error-page";
+
+const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <App />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/film/:filmId", 
+        element: <MoveDescription />,
+        loader: ({ params }) => {
+            const filmId = params.filmId; 
+            return getMoveDescription(filmId);
+        },
+    }
+]);
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+    <React.StrictMode>
+      <RouterProvider router={router} />
+    </React.StrictMode>
+);

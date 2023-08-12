@@ -3,3 +3,12 @@ export const token = {
     accept: 'application/json'
 };
 
+const token2 = `eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlODk2NTU1MGQ2NzljMzViMjA1ZmVmY2IxYmE2NjM4MiIsInN1YiI6IjY0OTMxZmMwNDNjZDU0MDE0NGEwYTcxOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.HraQMPJL2W8ZeKI5PCIbG7FVyPhwufE2ucIJ1rnubaE`;
+export const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${token2}`,
+    },
+}
+
