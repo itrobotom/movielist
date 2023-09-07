@@ -7,11 +7,11 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 
-export default function CardFilm({movie, onClick}) {
+export default function CardFilm({movie, myOnClick}) {
   const imgURL= "https://image.tmdb.org/t/p/w500" + (movie.poster_path || movie.backdrop_path);
   
   const handleCardClick = () => {
-    onClick(movie.id); //получить id  в родителя при клике на карточку
+    myOnClick(movie.id); //получить id  в родителя при клике на карточку
   };
 
   return (

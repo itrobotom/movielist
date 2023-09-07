@@ -1,17 +1,24 @@
 import './Header.css'
-import InputIcon from '@mui/icons-material/Input';
 import IconButton from '@mui/material/IconButton';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 
-function Header({head}) {
+function Header({head, isLogin, setIsLogin}) {
+  // клик на кнопку logout либо сотрет токен из куков
+  function handleLogin() {
+    setIsLogin(!isLogin);
+    console.log(isLogin); 
+  }
+
   return (
     <div className="header">
       <button className="button-home">{head}</button>
       {/* Поменять войти на иконку */}
       <IconButton aria-label="add"
-        sx={{ mr: 20}}
-        //onClick={resetFiltr}
+        sx={{ mr: 20 }}
+        onClick={handleLogin}
       >
-        <InputIcon />
+        {isLogin ? <LogoutIcon /> : <LoginIcon /> }
       </IconButton>
     </div>
   );

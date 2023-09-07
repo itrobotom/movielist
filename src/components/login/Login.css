@@ -1,0 +1,10 @@
+.background {
+    position: relative;
+    background: rgba(0, 0, 0, 0.5); /* Задайте желаемый цвет и прозрачность фона */
+    width: 100%;
+    height: 100vh; /* Это обеспечивает высоту фона на всю высоту видимой области экрана */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1; /* Убедитесь, что фон находится ниже компонента Paper, который имеет z-index по умолчанию равный 0 */
+  }
