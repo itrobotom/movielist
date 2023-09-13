@@ -64,7 +64,7 @@ function MoveFilter({ movies, setMovies, setIsLoadDataCards, page, setPage }) {
         type: 'setSelectSort',
         newSort: event.target.value
       });
-      console.log(event.target.value);
+      //console.log(event.target.value);
   };
 
 
@@ -73,7 +73,7 @@ function MoveFilter({ movies, setMovies, setIsLoadDataCards, page, setPage }) {
       type: 'setSelectYear',
       newYear: selectYear
     })
-    console.log(selectYear);
+    //console.log(selectYear);
   }
 
   //создаем и обновляем массив id элементов с выбранными элементами из списка жанров
@@ -93,12 +93,12 @@ function MoveFilter({ movies, setMovies, setIsLoadDataCards, page, setPage }) {
       type: 'setChangeGenre',
       updateIdGenre: updatedSelectedIds
     })
-    console.log(updatedSelectedIds); // Вывод обновленного массива идентификаторов выбранных жанров
+    //console.log(updatedSelectedIds); // Вывод обновленного массива идентификаторов выбранных жанров
   }
 
   function resetFiltr() {
     setKeyResetFiltr(keyResetFilter + 1); 
-    console.log(keyResetFilter);
+    //console.log(keyResetFilter);
     dispatch({type: 'setSelectSort', newSort: initialFilter.selectSort})
     dispatch({type: 'setSelectYear', newYear: initialFilter.selectYear})
     //при выводе мы видим, что сами переменные на странице изменились, а в консоли вывелись старые данные при первом клике на сброс, а при втором обновились как положено...
@@ -111,11 +111,11 @@ function MoveFilter({ movies, setMovies, setIsLoadDataCards, page, setPage }) {
     RequestGenre()
       .then((jsonGenre) => {
         
-        console.log('Данные по жанрам с сервера'); //`Данные по жанрам с сервера ${jsonGenre.genres}` При преобразовании массива объектов в строку с помощью шаблонных строк (``), каждый объект преобразуется в строку "[object Object]".
+        //console.log('Данные по жанрам с сервера'); //`Данные по жанрам с сервера ${jsonGenre.genres}` При преобразовании массива объектов в строку с помощью шаблонных строк (``), каждый объект преобразуется в строку "[object Object]".
         //Чтобы вывести содержимое объектов в виде читаемых значений, можно использовать метод JSON.stringify() с параметром null для отступов. 
         //Это преобразует объекты в строку JSON с отступами, делая их более читаемыми.
         //2 - количество отступов 
-        console.log(JSON.stringify(jsonGenre.genres, null, 2));
+        //console.log(JSON.stringify(jsonGenre.genres, null, 2));
         setGenries(jsonGenre.genres); //сохранили жанры, пришедшие с сервера
         
         setIsGetGenre(true);
@@ -130,7 +130,7 @@ function MoveFilter({ movies, setMovies, setIsLoadDataCards, page, setPage }) {
     if(stateFilter.selectSort === 'Популярности'){
       getPopularMoves(page)
         .then((json) => {
-          console.log(JSON.stringify(json, null, 2));
+          //console.log(JSON.stringify(json, null, 2));
           //СОХРАНИТЬ ОБЪЕКТ С ФИЛЬМАМИ В СТЕЙТ ОТОБРАЖАЕМХ ФИЛЬМОВ. СТЕЙТ ДОЛЖЕН БЫТЬ В РОДИТЕЛЕ APP.JS, ТАМ ЖЕ МЫ И СПУСКАЕМ ДАННЫЕ ВНУТРЬ КАРТОЧЕК
           setMovies(json);
           setIsLoadDataCards(true); //данные загружены, меняем флаг из App.js
@@ -138,7 +138,7 @@ function MoveFilter({ movies, setMovies, setIsLoadDataCards, page, setPage }) {
     } else { // значит по рейтингу (всего два типа фильтров)
       getRatingMoves(page)
         .then((json) => {
-          console.log(JSON.stringify(json, null, 2));
+          //console.log(JSON.stringify(json, null, 2));
           //СОХРАНИТЬ ОБЪЕКТ С ФИЛЬМАМИ В СТЕЙТ ОТОБРАЖАЕМХ ФИЛЬМОВ
           setMovies(json);
           setIsLoadDataCards(true); //данные загружены, меняем флаг из App.js

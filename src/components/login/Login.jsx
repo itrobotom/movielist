@@ -6,7 +6,7 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import './Login.css'
 
-export function GetToken({onClickToken}) {
+function GetToken({onClickToken}) {
     return(
         <div className="background">
             <Paper elevation={6} sx={{ width: '444px', height: '180px' }}>
@@ -31,7 +31,8 @@ export function GetToken({onClickToken}) {
     );
 }
 
-export function InputToken({onClickCancel}) {
+function InputToken({onClickCancel, inputToken, saveToken}) {
+
     return(
         <div className="background">
             <Paper elevation={6} sx={{ width: '444px', height: '180px' }}>
@@ -44,11 +45,12 @@ export function InputToken({onClickCancel}) {
                         id="standard-required"
                         label="Токен"
                         variant="standard"
+                        onChange={inputToken}
                     />
                 </DialogContent>
                 <DialogActions disableSpacing={true}>
                     <Button style={{ fontWeight: 500, color: '#2196F3', fontSize: '14px' }} variant="text" onClick={onClickCancel}>Отмена</Button>
-                    <Button style={{ fontWeight: 500, color: '#2196F3', fontSize: '14px' }} variant="text">Ок</Button>
+                    <Button style={{ fontWeight: 500, color: '#2196F3', fontSize: '14px' }} variant="text" onClick={saveToken}>Ок</Button>
                 </DialogActions> 
                 
             </Paper>
@@ -56,29 +58,4 @@ export function InputToken({onClickCancel}) {
     );
 }
 
-
-export function LoginPopup({namePopup, nameInput, btn1, btn2}) {
-    return(
-        <div className="background">
-            <Paper elevation={6} sx={{ width: '444px', height: '180px' }}>
-                <DialogTitle style={{ fontWeight: 'bold' }}>
-                    {namePopup}
-                </DialogTitle>    
-                <DialogContent>
-                    <TextField
-                        required
-                        id="standard-required"
-                        label={nameInput}
-                        variant="standard"
-                    />
-                    <h1>sdcsdvsdvswdv</h1>
-                </DialogContent>
-                <DialogActions disableSpacing={true}>
-                    <Button style={{ fontWeight: 500, color: '#2196F3', fontSize: '14px' }} variant="text">{btn1}</Button>
-                    <Button style={{ fontWeight: 500, color: '#2196F3', fontSize: '14px' }} variant="text">{btn2}</Button>
-                </DialogActions> 
-                
-            </Paper>
-        </div>       
-    );
-}
+export { GetToken, InputToken }

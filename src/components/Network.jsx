@@ -1,9 +1,11 @@
-import { options } from './token'
-
+//import { options } from './token'
+import { consoleToken } from "../components/token"
+import { getOptions } from "./token"
 const apiKey = 'e8965550d679c35b205fefcb1ba66382';
 const baseApiUrl = 'https://api.themoviedb.org/3';
 
 export async function RequestGenre() {
+    const options = getOptions();
     try {
         const url = `${baseApiUrl}/genre/movie/list?language=ru&api_key=${apiKey}`;
         let response = await fetch(url, options);
@@ -22,8 +24,8 @@ export async function RequestGenre() {
     } 
 }
 
-//ДОБАВИТЬ ОБРАБОТКУ ОШИБОК КАК В ЖАНРАХ ВО ВСЕ ЗАПРОСЫ
 export async function getPopularMoves(page = 1) {
+    const options = getOptions();
     const url = `${baseApiUrl}/movie/popular?language=ru&api_key=${apiKey}&page=${page}`;
     let response = await fetch(url, options);
     if (response.ok) {
@@ -35,6 +37,7 @@ export async function getPopularMoves(page = 1) {
 }
 
 export async function getRatingMoves(page = 1) {
+    const options = getOptions();
     const url = `${baseApiUrl}/movie/top_rated?language=ru&api_key=${apiKey}&page=${page}`;
     try{
         let response = await fetch(url, options);
@@ -54,9 +57,10 @@ export async function getRatingMoves(page = 1) {
 }
 
 export async function getMoveDescription(filmId) {
-    const url = `https://api.themoviedb.org/3/movie/${filmId}?append_to_response=credits&language=ru`;//const url = `${baseApiUrl}/movie/${filmId}?language=ru&api_key=${apiKey}`;
-    //const url = `${baseApiUrl}/movie/${filmId}?language=ru&api_key=${apiKey}`; const url = `${baseApiUrl}/movie/${filmId}?append_to_response=credits?language=ru&api_key=${apiKey}`;
-    //https://api.themoviedb.org/3/movie/${movieId}?append_to_response=credits&language=ru
+    const options = getOptions();
+    
+    const url = `https://api.themoviedb.org/3/movie/${filmId}?append_to_response=credits&language=ru`;
+    consoleToken();
     let response = await fetch(url, options);
     if (response.ok) {
         const json = await response.json(); // получаем массив объектов 
@@ -68,12 +72,13 @@ export async function getMoveDescription(filmId) {
 }
 
 export async function getMoveActors(filmId) {
+    const options = getOptions();
     const url = `${baseApiUrl}/movie/${filmId}?append_to_response=credits?language=ru&api_key=${apiKey}`; //const url = `${baseApiUrl}/movie/${filmId}/credits?language=ru&api_key=${apiKey}`;
 
     let response = await fetch(url, options);
     if (response.ok) {
         const json = await response.json(); // получаем массив объектов 
-        console.log(json);
+        //console.log(json);
         return json;
     } else {
         console.log(`Ошибка HTTP: ${response.status}`);
