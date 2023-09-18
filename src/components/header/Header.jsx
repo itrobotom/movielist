@@ -7,10 +7,10 @@ import { deleteTokenCookies } from "../token"
 function Header({head, isLogin, setIsLogin}) {
   // клик на кнопку logout либо сотрет токен из куков
   function handleLogin() {
-    setIsLogin(!isLogin);
-    if(isLogin){ //если поставить !isLogin он не успевает меняться при клике (некоторе время остается true) и токен не удаляется 
+    if(isLogin){ 
       console.log('Удаляем токен!');
       deleteTokenCookies(); //удаляем токен из куков
+      setIsLogin(!isLogin); //устанавливаем флаг как не авторизоавнный и сразу пройдет перерендер, отображаться теперь контент сайта не будет
     }
     console.log('После удаления токена вот такой флаг авторизации: ', isLogin); 
   }

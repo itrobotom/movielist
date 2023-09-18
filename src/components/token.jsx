@@ -48,7 +48,7 @@ export const options = {
   method: 'GET',
   headers: {
     accept: 'application/json',
-    Authorization: `Bearer ${token2}`, //токен лучше записать не через обращение к кукам, а из стейта 
+    Authorization: `Bearer ${token2}`, 
   },
 }
 
@@ -58,9 +58,25 @@ function getOptions(){
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Authorization: `Bearer ${token}`, //токен лучше записать не через обращение к кукам, а из стейта 
+      Authorization: `Bearer ${token}`, 
     },
   }
 }
 
-export { saveTokenCookies, checkTokenCookie, deleteTokenCookies, getTokenCookie, consoleToken, getOptions }
+function postOptionsFavorite(movie_id, method){ //method - true/false
+  console.log('Вот id фильма', movie_id);
+  const token = Cookies.get('autorization-token');
+  return {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+      Authorization: `Bearer ${token}`, 
+    },
+    body: JSON.stringify({media_type: 'movie', media_id: movie_id, favorite: method})
+  }
+}
+
+
+
+export { saveTokenCookies, checkTokenCookie, deleteTokenCookies, getTokenCookie, consoleToken, getOptions, postOptionsFavorite }

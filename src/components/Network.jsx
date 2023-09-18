@@ -1,10 +1,10 @@
 //import { options } from './token'
 import { consoleToken } from "../components/token"
-import { getOptions } from "./token"
+import { getOptions, postOptionsFavorite } from "./token"
 const apiKey = 'e8965550d679c35b205fefcb1ba66382';
 const baseApiUrl = 'https://api.themoviedb.org/3';
 
-export async function RequestGenre() {
+async function RequestGenre() {
     const options = getOptions();
     try {
         const url = `${baseApiUrl}/genre/movie/list?language=ru&api_key=${apiKey}`;
@@ -24,7 +24,7 @@ export async function RequestGenre() {
     } 
 }
 
-export async function getPopularMoves(page = 1) {
+async function getPopularMoves(page = 1) {
     const options = getOptions();
     const url = `${baseApiUrl}/movie/popular?language=ru&api_key=${apiKey}&page=${page}`;
     let response = await fetch(url, options);
@@ -36,7 +36,7 @@ export async function getPopularMoves(page = 1) {
     } 
 }
 
-export async function getRatingMoves(page = 1) {
+async function getRatingMoves(page = 1) {
     const options = getOptions();
     const url = `${baseApiUrl}/movie/top_rated?language=ru&api_key=${apiKey}&page=${page}`;
     try{
@@ -56,7 +56,7 @@ export async function getRatingMoves(page = 1) {
     
 }
 
-export async function getMoveDescription(filmId) {
+async function getMoveDescription(filmId) {
     const options = getOptions();
     
     const url = `https://api.themoviedb.org/3/movie/${filmId}?append_to_response=credits&language=ru`;
@@ -71,7 +71,7 @@ export async function getMoveDescription(filmId) {
     } 
 }
 
-export async function getMoveActors(filmId) {
+async function getMoveActors(filmId) {
     const options = getOptions();
     const url = `${baseApiUrl}/movie/${filmId}?append_to_response=credits?language=ru&api_key=${apiKey}`; //const url = `${baseApiUrl}/movie/${filmId}/credits?language=ru&api_key=${apiKey}`;
 
@@ -84,3 +84,62 @@ export async function getMoveActors(filmId) {
         console.log(`Ошибка HTTP: ${response.status}`);
     } 
 }
+
+async function getIdAccount(){
+    const options = getOptions();
+    const url = `${baseApiUrl}/account/account_id`;
+    let response = await fetch(url, options);
+    try {
+        if (response.ok) {
+            const json = await response.json(); // получаем массив объектов 
+            console.log('id аккаунта: ', json.id);
+            return json;
+        } else {
+            console.log(`Ошибка HTTP: ${response.status}`);
+        }
+    } catch(error) {
+        alert(`Не можем обратиться к серверу, проверьте интернет соединение: ${error.name} - ${error.message}`);
+        throw error; //проброс исключения 
+    }
+}
+
+async function addFavoriteFilm(movie_id, account_id, method){
+    const options = postOptionsFavorite(movie_id, method);
+    console.log('Вот id фильма2', movie_id);
+    const url = `${baseApiUrl}/account/${account_id}/favorite`;
+    console.log('лог1', url);
+    let response = await fetch(url, options);
+    console.log('лог2', response);
+    try {
+        if (response.ok) {
+            const json = await response.json(); // получаем массив объектов 
+            console.log('Ответ сервера при добавления фильма в избранное: ', json);
+            //return json;
+        } else {
+            console.log(`Ошибка HTTP: ${response.status}`);
+        }
+    } catch(error) {
+        alert(`Не можем обратиться к серверу, проверьте интернет соединение: ${error.name} - ${error.message}`);
+        throw error; //проброс исключения 
+    }
+}
+
+async function getFavoriteFilm(account_id){
+    const options = getOptions();
+    const url = `${baseApiUrl}/account/${account_id}/favorite/movies`;
+    let response = await fetch(url, options);
+    try {
+        if (response.ok) {
+            const json = await response.json(); // получаем массив объектов 
+            console.log('Избранные фильмы: ', json);
+            return json;
+        } else {
+            console.log(`Ошибка HTTP: ${response.status}`);
+        }
+    } catch(error) {
+        alert(`Не можем обратиться к серверу, проверьте интернет соединение: ${error.name} - ${error.message}`);
+        throw error; //проброс исключения 
+    }
+}
+
+export { RequestGenre, getPopularMoves, getRatingMoves, getMoveDescription, getMoveActors, getIdAccount, addFavoriteFilm, getFavoriteFilm }
