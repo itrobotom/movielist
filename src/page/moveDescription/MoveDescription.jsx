@@ -1,8 +1,6 @@
+import { React, useState, useEffect } from "react";
 import Header from "../../components/header/Header";
-import {
-    useLoaderData,
-} from "react-router-dom";
-
+import { useLoaderData } from "react-router-dom";
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -15,24 +13,64 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { getFavoriteFilm, addFavoriteFilm } from '../../components/Network'
 
 
 export function MoveDescription() {
+    const [favoriteFilms, setFavoriteFilms] = useState(null); //храним данные о избранных фильмах
+
     const jsonMoveDescription = useLoaderData(); //получаем данные в json про фильм
-    console.log(jsonMoveDescription);
+    console.log('Подробности про фильм: ', jsonMoveDescription);
+    //const favoriteFilms = getFavoriteFilm();
     const imgURL= "https://image.tmdb.org/t/p/w500" + (jsonMoveDescription.poster_path || jsonMoveDescription.backdrop_path);
+    const [favoriteFilmFlag, setFavoriteFilmFlag] = useState(false);
+
+    const handleFavoriteBtn = () => {
+        const accountId = 20045995;//забираем из куков, но пока просто укажем по факту мой
+        //проверка в каком состоянии у нас фильм, если в избранном, то удаляем от туда, если не в избранном, то добавляем туда запрос на сервер и локально в стейт
+        if(favoriteFilmFlag){
+          //лучше бы еще проверить ответ от сервера, если ОК, то тогда менять в стейте! А иначе смена на сервере может не произойти, а локально стей поменяем 
+          addFavoriteFilm(jsonMoveDescription.id, accountId, false);
+          setFavoriteFilmFlag(!favoriteFilmFlag);
+        } else {
+          addFavoriteFilm(jsonMoveDescription.id, accountId, true);
+          setFavoriteFilmFlag(!favoriteFilmFlag);
+        }
+        console.log('Получаем состояние израбранного: ', favoriteFilmFlag);
+      }
+
+    useEffect(() => { //ОБЯЗАТЕЛЬНО НУЖЕН USEEFFECT, ИНАЧЕ ПОЛУЧИМ ЗАЦИКЛЕННЫЕ РЕНДЕР (ИЗМЕНЕНИЕ СТЕЙТА ПОРОЖДАЕТ ПЕРЕРЕНДЕР)
+        // Загрузить избранные фильмы только после успешной авторизации
+        getFavoriteFilm()
+            .then((favoriteFilms) => {
+            // favoriteFilms содержит избранные фильмы
+            // Сохраните избранные фильмы в стейте
+            setFavoriteFilms(favoriteFilms);
+            console.log('Вот наш результат из json по избранным фильмам: ', favoriteFilms.results);
+            console.log('id Открытого фильма: ', jsonMoveDescription.id);
+            setFavoriteFilmFlag(favoriteFilms.results.some((film) => film.id === jsonMoveDescription.id));
+            console.log('Открытый фильм находится в избранном? ', favoriteFilmFlag);  
+        })
+        .catch((error) => {
+            // Обработка ошибок при загрузке избранных фильмов
+            console.error('Ошибка загрузки избранных фильмов:', error);
+        });
+    }, []); // Пустой массив зависимостей означает, что эффект выполнится только при монтировании компонента
+    
     return(
         <>
             <Header head={`Фильмы-${jsonMoveDescription.original_title}`}/>
             <Box
                 sx={{ display: 'flex'}} 
             >
+                
                 <CardMedia
                     component="img"
                     sx={{ width: "300px", height: "402px", m: 3, ml: 30}}
                     image = { imgURL }
                     alt="img_film"
                 />
+                
                 <Box ml='10px' mt='10px'>
                     <Box ml='10px' mt='10px' sx={{ display: 'flex'}}>
                         <Typography 
@@ -42,8 +80,9 @@ export function MoveDescription() {
                         </Typography>
                         <IconButton aria-label="add"  // НУЖНО УВЕЛИЧИТЬ ЗВЕЗДОЧКУ fontSize: "large" !!!!!!!!!!!!!!!!!!!!!!!
                             sx = {{ mb: 2, mr: 0 }}
+                            onClick={handleFavoriteBtn}
                         >
-                            <StarBorderIcon />
+                            <StarBorderIcon style={{ color: favoriteFilmFlag ? 'red' : 'gray' }}/>
                         </IconButton>
                     </Box>
                     

@@ -3,11 +3,9 @@ import Header from "./components/header/Header";
 import MoveFilter from "./page/moveFilter/MoveFilter";
 import CardFilm from "./page/cardFilm/CardFilm";
 import './App.css'
-import { getMoveDescription, getIdAccount, getFavoriteFilm } from './components/Network'
+import { getIdAccount, getFavoriteFilm } from './components/Network'
 import { GetToken, InputToken } from "./components/login/Login"
 import { saveTokenCookies, checkTokenCookie, getTokenCookie, consoleToken } from "./components/token"
-
-import { Link } from "react-router-dom";
 
 function App() {
   const [movies, setMovies] = useState(null); //храним данные о фильмах с сервера (будет объект)
@@ -19,11 +17,11 @@ function App() {
   const [isClickGetToken, setIsClickGetToken] = useState(false); //изначально не нажата запросить клавиша о том, что токен получен
   const [tokenInputPopup, setTokenInputPopup] = useState('');
 
-  const handleCardClick = (movieId) => {
-    console.log('Clicked movie ID:', movieId);
-    //отправим запрос на сервер по деталям фильма
-    getMoveDescription(movieId);
-  };
+  // const handleCardClick = (movieId) => {
+  //   console.log('Clicked movie ID:', movieId);
+  //   //отправим запрос на сервер по деталям фильма
+  //   getMoveDescription(movieId);
+  // };
 
   const handleClickToken = () => {
     setIsClickGetToken(!isClickGetToken);
@@ -75,7 +73,6 @@ function App() {
     //console.log('Введенный токен: ', tokenInputPopup);
   }
 
-
   //при клике на header появляется модалка для ввода почты и запроса токена (токен уже есть, запрос только для абстракции)
   //появляется поле для ввода токена, токен вставили - сохраняем в куках и для всех запросов он берется из куков (а изначально лежит просто в переменной)
   
@@ -120,15 +117,16 @@ function App() {
         {/* теперь в movies есть все данные, пришедшие с сервера, чтобы вывести карточки фильмов */}
         <div className="cards-container">
         {movies.results.map((movie) => {
-          // Ищем объект с соответствующим id в массиве favoriteFilms
+          // Ищем объект с соответствующим id в массиве favoriteFilms, если найдет, то будет true
           const favoriteFilmFlag = favoriteFilms.results.find((film) => film.id === movie.id);
 
           return (
             <div key={movie.id}>
-              <Link to={`/film/${movie.id}`}>
-                {/* Передаем проп favoriteFilm в CardFilm */}
-                <CardFilm movie={movie} myOnClick={handleCardClick} favoriteFilm={favoriteFilmFlag !== undefined} />
-              </Link>
+              {/* УБРАЛ LINK ОТ СЮДА Т.К. ЕГО ДЕЙСТВИЕ РАСПРОСТРАНЯЛОСЬ НА ВСЮ КАРТОЧКУ И ВСЕ ЕЕ ЭЛЕМЕНТЫ В Т.Ч. НА ИЗБРАННОЕ (ЗВЕЗДОЧКУ) */}
+              {/* <Link to={`/film/${movie.id}`}> */}
+                {/* <CardFilm movie={movie} myOnClick={handleCardClick} favoriteFilm={favoriteFilmFlag !== undefined} /> */}
+                <CardFilm movie={movie} favoriteFilm={favoriteFilmFlag !== undefined} />
+              {/* </Link> */}
             </div>
           );
         })}
