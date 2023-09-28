@@ -6,31 +6,42 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { addFavoriteFilm } from '../../components/Network';
-import { React, useState, useEffect } from "react";
+import { React, useState } from "react";
 
 import { Link } from "react-router-dom";
 
-export default function CardFilm({movie, myOnClick, favoriteFilm}) { //добавить аргумент favoriteMovies (то есть будем смотерть, есть ли данный фильм в подборке избранных)
+import Cookies from 'js-cookie'
+
+export default function CardFilm({movie, favoriteFilm}) { 
   const [favoriteFilmFlag, setFavoriteFilmFlag] = useState(favoriteFilm); 
   const imgURL= "https://image.tmdb.org/t/p/w500" + (movie.poster_path || movie.backdrop_path);
-  
-  // const handleCardClick = () => {
-  //   myOnClick(movie.id); //получить id  в родителя при клике на карточку
-  //   console.log('Вызвана функция: ', handleCardClick);
-  // };
 
   const handleFavoriteBtn = () => {
-    const accountId = 20045995;//забираем из куков, но пока просто укажем по факту мой
-    //проверка в каком состоянии у нас фильм, если в избранном, то удаляем от туда, если не в избранном, то добавляем туда
-    //favoriteFilm ? addFavoriteFilm(movie.id, accountId, true) : addFavoriteFilm(movie.id, accountId, false);
+    const accountId = Cookies.get('account_id'); 
     if(favoriteFilmFlag){
-      addFavoriteFilm(movie.id, accountId, false);
       setFavoriteFilmFlag(!favoriteFilmFlag);
+      addFavoriteFilm(movie.id, accountId, false)
+        .then(() => {
+          //ничего не делаем, т.к. мы уже поменяли на отмеченное в избранное не дожадаясь ответа сервера
+        })
+        .catch((error) => {
+          setFavoriteFilmFlag(favoriteFilmFlag);
+          alert("Сетевая ошибка при удалении из избранного, повторите позже", error);
+          console.error("Сетевая ошибка при удалении из избранного, повторите позже", error);
+        });    
     } else {
-      addFavoriteFilm(movie.id, accountId, true);
       setFavoriteFilmFlag(!favoriteFilmFlag);
+      addFavoriteFilm(movie.id, accountId, true)
+        .then(() => {
+          //ничего не делаем, т.к. мы уже поменяли на отмеченное в избранное не дожадаясь ответа сервера
+        })
+        .catch((error) => {
+          setFavoriteFilmFlag(favoriteFilmFlag);
+          alert("Сетевая ошибка при добавлении в избранное, повторите позже", error);
+          console.error("Сетевая ошибка при добавлении в избранное, повторите позже", error);
+        });
+      
     }
-    console.log('Получаем состояние израбранного: ', favoriteFilmFlag);
   }
 
   return (
@@ -39,10 +50,8 @@ export default function CardFilm({movie, myOnClick, favoriteFilm}) { //доба�
         <Link to={`/film/${movie.id}`}>
           <CardMedia
             component="img"
-            //height="140" //можно изменить высоту отображения изображения карточки, но тогда она будет урезана
             image = { imgURL }
             alt="img_film"
-            // onClick={handleCardClick}
           />
         </Link>
         <Box
@@ -52,14 +61,11 @@ export default function CardFilm({movie, myOnClick, favoriteFilm}) { //доба�
             <Typography color="#000000" variant="h6" gutterBottom>{movie.original_title}</Typography>
             <Typography color="lightgray" variant="h7">{movie.vote_average}</Typography>
           </Box>
+          {/* ПРЕДУПРЕЖДЕНИЕ react-dom.development.js:86 Warning: validateDOMNesting(...): <button> cannot appear as a descendant of <button>.
+          ЕСЛИ ЗАКОММЕНТИТЬ IconButton, ВСЕ ОК, ВЫШЕ В РОДИТЕЛЯХ СМОТЕРТЬ BUTTON */}
           <IconButton aria-label="add"
             sx = {{ mt: 0, mr: 2 }}
-            // onClick={(e) => {
-            //   e.stopPropagation(); // Остановить распространение события
-            //   handleFavoriteBtn();
-            // }}
-            onClick={handleFavoriteBtn}
-             
+            onClick={handleFavoriteBtn}     
           >
             <StarBorderIcon style={{ color: favoriteFilmFlag ? 'red' : 'gray' }}/>
           </IconButton>

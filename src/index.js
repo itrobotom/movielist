@@ -24,8 +24,6 @@ const router = createBrowserRouter([
     {
         path: "/film/:filmId", 
         element: <MoveDescription />,
-        //объект params берется из динамических данных url, мы задаем только один динамический параметр через : то есть :filmId, было бы в url несколько динамических параметров
-        // значит в params был бы доступ к нескольким динамическим параметрам
         loader: ({ params }) => {
             const filmId = params.filmId; 
             return getMoveDescription(filmId);

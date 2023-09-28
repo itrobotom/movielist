@@ -1,6 +1,6 @@
-//import { options } from './token'
 import { consoleToken } from "../components/token"
 import { getOptions, postOptionsFavorite } from "./token"
+import Cookies from 'js-cookie'
 const apiKey = 'e8965550d679c35b205fefcb1ba66382';
 const baseApiUrl = 'https://api.themoviedb.org/3';
 
@@ -10,17 +10,15 @@ async function RequestGenre() {
         const url = `${baseApiUrl}/genre/movie/list?language=ru&api_key=${apiKey}`;
         let response = await fetch(url, options);
         
-        if (response.status === 200) { //if (response.ok) не достаточно, там код 200-299, лучше наверняка 200 смотреть
-            let json = await response.json(); // получаем массив объектов ({id: 28, name: 'боевик'})
-            //console.log(json.genres[0]); 
+        if (response.status === 200) { 
+            let json = await response.json();
             return json;
         } else {
             console.log(`Ошибка HTTP: ${response.status}`);
         } 
-    } catch (error) { //выведется созданная в else response OK
+    } catch (error) { 
         alert(`Не можем обратиться к серверу, проверьте интернет соединение: ${error.name} - ${error.message}`);
-        throw error; //проброс исключения чтобы его в useEffect Обработать
-        //ошибку возвращать не надо, иначе далее в рендере мы обратимся к объекту, который пришел, ожидая данные о фильме, а получим объект ошибки
+        throw error; 
     } 
 }
 
@@ -29,7 +27,7 @@ async function getPopularMoves(page = 1) {
     const url = `${baseApiUrl}/movie/popular?language=ru&api_key=${apiKey}&page=${page}`;
     let response = await fetch(url, options);
     if (response.ok) {
-        const json = await response.json(); // получаем массив объектов 
+        const json = await response.json();
         return json;
     } else {
         console.log(`Ошибка HTTP: ${response.status}`);
@@ -42,8 +40,7 @@ async function getRatingMoves(page = 1) {
     try{
         let response = await fetch(url, options);
         if (response.status === 200) {
-            const json = await response.json(); // получаем массив объектов 
-            //console.log(json.genres[0]); 
+            const json = await response.json(); 
             return json;
         } else {
             console.log(`Ошибка HTTP: ${response.status}`);
@@ -51,7 +48,7 @@ async function getRatingMoves(page = 1) {
     }
     catch (error){
         alert(`Не можем обратиться к серверу, проверьте интернет соединение: ${error.name} - ${error.message}`);
-        throw error; //проброс исключения 
+        throw error;
     }
     
 }
@@ -63,7 +60,7 @@ async function getMoveDescription(filmId) {
     consoleToken();
     let response = await fetch(url, options);
     if (response.ok) {
-        const json = await response.json(); // получаем массив объектов 
+        const json = await response.json(); 
         console.log(json);
         return json;
     } else {
@@ -77,8 +74,7 @@ async function getMoveActors(filmId) {
 
     let response = await fetch(url, options);
     if (response.ok) {
-        const json = await response.json(); // получаем массив объектов 
-        //console.log(json);
+        const json = await response.json();
         return json;
     } else {
         console.log(`Ошибка HTTP: ${response.status}`);
@@ -91,46 +87,44 @@ async function getIdAccount(){
     let response = await fetch(url, options);
     try {
         if (response.ok) {
-            const json = await response.json(); // получаем массив объектов 
+            const json = await response.json(); 
             console.log('id аккаунта: ', json.id);
-            return json;
+            Cookies.set('account_id', json.id);
+            return json.id;
         } else {
             console.log(`Ошибка HTTP: ${response.status}`);
         }
     } catch(error) {
         alert(`Не можем обратиться к серверу, проверьте интернет соединение: ${error.name} - ${error.message}`);
-        throw error; //проброс исключения 
+        throw error;
     }
 }
 
 async function addFavoriteFilm(movie_id, account_id, method){
     const options = postOptionsFavorite(movie_id, method);
-    console.log('Вот id фильма2', movie_id);
     const url = `${baseApiUrl}/account/${account_id}/favorite`;
-    console.log('лог1', url);
     let response = await fetch(url, options);
-    console.log('лог2', response);
     try {
         if (response.ok) {
             const json = await response.json(); // получаем массив объектов 
             console.log('Ответ сервера при добавления фильма в избранное: ', json);
-            //return json;
         } else {
             console.log(`Ошибка HTTP: ${response.status}`);
         }
     } catch(error) {
         alert(`Не можем обратиться к серверу, проверьте интернет соединение: ${error.name} - ${error.message}`);
-        throw error; //проброс исключения 
+        throw error;
     }
 }
 
-async function getFavoriteFilm(account_id){
+async function getFavoriteFilm(){
+    const account_id = Cookies.get('account_id');
     const options = getOptions();
     const url = `${baseApiUrl}/account/${account_id}/favorite/movies`;
     let response = await fetch(url, options);
     try {
         if (response.ok) {
-            const json = await response.json(); // получаем массив объектов 
+            const json = await response.json();
             console.log('Избранные фильмы: ', json);
             return json;
         } else {
@@ -138,8 +132,27 @@ async function getFavoriteFilm(account_id){
         }
     } catch(error) {
         alert(`Не можем обратиться к серверу, проверьте интернет соединение: ${error.name} - ${error.message}`);
-        throw error; //проброс исключения 
+        throw error;
     }
 }
 
-export { RequestGenre, getPopularMoves, getRatingMoves, getMoveDescription, getMoveActors, getIdAccount, addFavoriteFilm, getFavoriteFilm }
+async function getSearchFilms(inputSearch) {
+    const options = getOptions();
+    const baseApiUrl = 'https://api.themoviedb.org/3';
+    const url = `${baseApiUrl}/search/movie?query=${inputSearch}&include_adult=false&language=en-US&page=1`;
+    let response = await fetch(url, options);
+    try {
+        if (response.ok) {
+            const json = await response.json();
+            console.log('Найденные фильмы: ', json);
+            return json;
+        } else {
+            console.log(`Ошибка HTTP: ${response.status}`);
+        }
+    } catch(error) {
+        alert(`Не можем обратиться к серверу, проверьте интернет соединение: ${error.name} - ${error.message}`);
+        throw error; 
+    }  
+}
+
+export { RequestGenre, getPopularMoves, getRatingMoves, getMoveDescription, getMoveActors, getIdAccount, addFavoriteFilm, getFavoriteFilm, getSearchFilms }

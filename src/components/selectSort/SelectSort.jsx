@@ -8,9 +8,8 @@ export function SelectSort({valueFilter, onChange, categories}) {
         <FormControl fullWidth>
             <InputLabel variant="standard" htmlFor="uncontrolled-native"> Сортировать по: </InputLabel>
             <Select
-                //key={`${keyResetFilter}${stateFilter.selectSort}`} НАДО ИЛИ НЕТ СТАВИТЬ КЛЮЧ ДЛЯ MUI АДЕКВАТНОГО ПЕРЕРЕНДЕРА
                 variant="standard"
-                value={valueFilter} //по умолчанию брать значение из состояния! а не из исходного массива
+                value={valueFilter} 
                 onChange={onChange}
               >
                 <MenuItem value={categories[0]}>{categories[0]}</MenuItem>
