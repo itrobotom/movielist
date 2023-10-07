@@ -17,18 +17,22 @@ import { getFavoriteFilm, addFavoriteFilm } from '../../components/Network'
 
 import Cookies from 'js-cookie'
 
-export function MoveDescription() {
-    const [favoriteFilms, setFavoriteFilms] = useState(null); 
 
-    const jsonMoveDescription = useLoaderData(); 
+export function MoveDescription() {
+    const [favoriteFilms, setFavoriteFilms] = useState(null); //храним данные о избранных фильмах
+
+    const jsonMoveDescription = useLoaderData(); //получаем данные в json про фильм
 
     console.log('Подробности про фильм: ', jsonMoveDescription);
+    //const favoriteFilms = getFavoriteFilm();
     const imgURL= "https://image.tmdb.org/t/p/w500" + (jsonMoveDescription.poster_path || jsonMoveDescription.backdrop_path);
     const [favoriteFilmFlag, setFavoriteFilmFlag] = useState(false);
 
     const handleFavoriteBtn = () => {
         const account_id = Cookies.get('account_id');
+        //проверка в каком состоянии у нас фильм, если в избранном, то удаляем от туда, если не в избранном, то добавляем туда запрос на сервер и локально в стейт
         if(favoriteFilmFlag){
+          //лучше бы еще проверить ответ от сервера, если ОК, то тогда менять в стейте! А иначе смена на сервере может не произойти, а локально стей поменяем 
           addFavoriteFilm(jsonMoveDescription.id, account_id, false);
           setFavoriteFilmFlag(!favoriteFilmFlag);
         } else {
@@ -38,23 +42,31 @@ export function MoveDescription() {
         console.log('Получаем состояние израбранного: ', favoriteFilmFlag);
       }
 
-    useEffect(() => { 
+    useEffect(() => { //ОБЯЗАТЕЛЬНО НУЖЕН USEEFFECT, ИНАЧЕ ПОЛУЧИМ ЗАЦИКЛЕННЫЕ РЕНДЕР (ИЗМЕНЕНИЕ СТЕЙТА ПОРОЖДАЕТ ПЕРЕРЕНДЕР)
+        // Загрузить избранные фильмы только после успешной авторизации
         getFavoriteFilm()
             .then((favoriteFilms) => {
+            // favoriteFilms содержит избранные фильмы
+            // Сохраните избранные фильмы в стейте
             setFavoriteFilms(favoriteFilms);
+            console.log('Вот наш результат из json по избранным фильмам: ', favoriteFilms.results);
+            console.log('id Открытого фильма: ', jsonMoveDescription.id);
             setFavoriteFilmFlag(favoriteFilms.results.some((film) => film.id === jsonMoveDescription.id));
+            console.log('Открытый фильм находится в избранном? ', favoriteFilmFlag);  
         })
         .catch((error) => {
+            // Обработка ошибок при загрузке избранных фильмов
             console.error('Ошибка загрузки избранных фильмов:', error);
         });
-    }, []); 
+    }, []); // Пустой массив зависимостей означает, что эффект выполнится только при монтировании компонента
     
     return(
         <>
             <Header head={`Фильмы-${jsonMoveDescription.original_title}`}/>
             <Box
                 sx={{ display: 'flex'}} 
-            >    
+            >
+                
                 <CardMedia
                     component="img"
                     sx={{ width: "300px", height: "402px", m: 3, ml: 30}}
@@ -69,7 +81,7 @@ export function MoveDescription() {
                         >
                             {`${jsonMoveDescription.original_title}(${jsonMoveDescription.release_date})`}
                         </Typography>
-                        <IconButton aria-label="add"  
+                        <IconButton aria-label="add"  // НУЖНО УВЕЛИЧИТЬ ЗВЕЗДОЧКУ fontSize: "large" !!!!!!!!!!!!!!!!!!!!!!!
                             sx = {{ mb: 2, mr: 0 }}
                             onClick={handleFavoriteBtn}
                         >

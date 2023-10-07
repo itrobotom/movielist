@@ -17,7 +17,7 @@ export function SliderYears({ valueYears, onChange }) {
         max={2023} 
         min={1960} 
         size="small"
-        valueLabelDisplay="auto" 
+        valueLabelDisplay="auto" //отображать значение над бегунками только когда перемещаем их auto, а если надо всегда, то on
       />
     </Box>
   );

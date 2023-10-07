@@ -5,6 +5,7 @@ import Pagination from '@mui/material/Pagination';
 function AllPagination( {page, setPage} ) {
   const handleChange = (event, value) => {
     setPage(value);
+    console.log(page);
   };
   const totalPages = 500;
 

@@ -12,12 +12,14 @@ import { Link } from "react-router-dom";
 
 import Cookies from 'js-cookie'
 
-export default function CardFilm({movie, favoriteFilm}) { 
+export default function CardFilm({movie, favoriteFilm}) { //добавить аргумент favoriteMovies (то есть будем смотерть, есть ли данный фильм в подборке избранных)
   const [favoriteFilmFlag, setFavoriteFilmFlag] = useState(favoriteFilm); 
   const imgURL= "https://image.tmdb.org/t/p/w500" + (movie.poster_path || movie.backdrop_path);
 
   const handleFavoriteBtn = () => {
+    //const accountId = 20045995;//забираем из куков, но пока просто укажем по факту мой
     const accountId = Cookies.get('account_id'); 
+    //РЕАЛИЗОВАН ОПТИМИСТИЧНЫЙ ИНТЕРФЕЙС!!! СОСТОЯНИЕ В ИЗРБРАННОМ СМЕНИТСЯ СРАЗУ, НО ЕСЛИ ОТ СЕРВЕРА ПРИЙДЕТ ОШИБКА, ТО ИКОНКА ВЕРНЕТСЯ В ИСХОДНОЕ СОСТОЯНИЕ И ВЫСКОЧЕТ ПРЕДУПРЕЖДЕНИЕ
     if(favoriteFilmFlag){
       setFavoriteFilmFlag(!favoriteFilmFlag);
       addFavoriteFilm(movie.id, accountId, false)
@@ -50,6 +52,7 @@ export default function CardFilm({movie, favoriteFilm}) {
         <Link to={`/film/${movie.id}`}>
           <CardMedia
             component="img"
+            //height="140" //можно изменить высоту отображения изображения карточки, но тогда она будет урезана
             image = { imgURL }
             alt="img_film"
           />
