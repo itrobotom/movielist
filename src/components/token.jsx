@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import { store } from '../index'
+import { store } from '../store/mainReducer'
 //eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlODk2NTU1MGQ2NzljMzViMjA1ZmVmY2IxYmE2NjM4MiIsInN1YiI6IjY0OTMxZmMwNDNjZDU0MDE0NGEwYTcxOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.HraQMPJL2W8ZeKI5PCIbG7FVyPhwufE2ucIJ1rnubaE 
 
 //написать функцию для сохранения токена в куки и получения из куков далее в options,
@@ -56,7 +56,7 @@ export const options = {
 function getOptions(){
   //const token = Cookies.get('autorization-token');
   //ТЕПЕРЬ ПОЛУЧИМ ДАННЫЕ О ТОКЕНЕ ИЗ ХРАНИЛИЩА REDUX
-  const token = store.getState().tokenAutorization;
+  const token = store.getState().user.tokenAutorization;
   console.log('getOpt store token', token);
   return {
     method: 'GET',

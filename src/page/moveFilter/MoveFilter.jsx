@@ -15,9 +15,10 @@ import Box from '@mui/material/Box';
 import { SelectSort } from "../../components/selectSort/SelectSort";
 import Input from '@mui/material/Input';
 import { consoleToken } from "../../components/token";
+import { setMovies } from "../../store/moviesReducer";
+import { useSelector, useDispatch } from 'react-redux';
 
-
-function MoveFilter({ movies, setMovies, setIsLoadDataCards, page, setPage, searchFilms, setSearchFilms, setIsSearchFilmNow }) {
+function MoveFilter({ setIsLoadDataCards, page, setPage, searchFilms, setSearchFilms, setIsSearchFilmNow }) {
   //можно завести через диспатч в общий юсредьюс и добавить в большой стейт иеще и массив с жанрами
   const [genres, setGenries] = useState(null); //храним данные с сервера в genries, по умолчанию лучше null, чем [] пустой массив
   const [isGetGenre, setIsGetGenre] = useState(false);
@@ -34,8 +35,11 @@ function MoveFilter({ movies, setMovies, setIsLoadDataCards, page, setPage, sear
     selectYear: [1960, 2023],
     selectedGenresIds: [],
   };//['Популярные по убыванию', '2022', []]
+
+  const dispatchRedux = useDispatch(); //для получения данных со стора создаем dispatchRedux
   
   const [stateFilter, dispatch] = useReducer(stateFilterReduсer, initialFilter);
+
 
   //!!!ЧТОБЫ сократить размер файла, можно перенести редьюсер в отдельный файл
   function stateFilterReduсer(stateFilter, action) {
@@ -148,7 +152,11 @@ function MoveFilter({ movies, setMovies, setIsLoadDataCards, page, setPage, sear
         .then((json) => {
           console.log("Сохраняем фильмы по популярности: ", JSON.stringify(json, null, 2));
           //СОХРАНИТЬ ОБЪЕКТ С ФИЛЬМАМИ В СТЕЙТ ОТОБРАЖАЕМХ ФИЛЬМОВ. СТЕЙТ ДОЛЖЕН БЫТЬ В РОДИТЕЛЕ APP.JS, ТАМ ЖЕ МЫ И СПУСКАЕМ ДАННЫЕ ВНУТРЬ КАРТОЧЕК
-          setMovies(json);
+          
+          
+          
+          
+          dispatchRedux(setMovies(json));
           setIsLoadDataCards(true); //данные загружены, меняем флаг из App.js
         })
     } else { // значит по рейтингу (всего два типа фильтров)
@@ -156,7 +164,12 @@ function MoveFilter({ movies, setMovies, setIsLoadDataCards, page, setPage, sear
         .then((json) => {
           console.log("Сохраняем фильмы по рейтингу: ", JSON.stringify(json, null, 2));
           //СОХРАНИТЬ ОБЪЕКТ С ФИЛЬМАМИ В СТЕЙТ ОТОБРАЖАЕМХ ФИЛЬМОВ
-          setMovies(json);
+          
+          
+          
+          
+          
+          dispatchRedux(setMovies(json));
           setIsLoadDataCards(true); //данные загружены, меняем флаг из App.js
         })
         .catch((error) => {

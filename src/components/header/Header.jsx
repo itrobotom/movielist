@@ -3,7 +3,7 @@ import IconButton from '@mui/material/IconButton';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { deleteTokenCookies } from "../token"
-import { deleteToken } from '../../index';
+import { deleteToken } from '../../store/userReducer'
 
 import { useSelector, useDispatch } from 'react-redux';
 

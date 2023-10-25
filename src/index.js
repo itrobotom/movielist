@@ -16,43 +16,8 @@ import {
 import ErrorPage from "./components/error-page";
 
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
+import { store } from './store/mainReducer'
 
-//задаем типы экшенов через константы чтобы при вводе не ошибиться
-export const ADD_TOKEN = 'ADD_TOKEN';
-export const DELETE_TOKEN = 'DELETE_TOKEN';
-
-//создаем объект пользователя, чтобы потом можно было не только сохраняти и изменять информацию о токене, но и другую 
-const defaultUserInformation = {
-    tokenAutorization: '', 
-}
-
-//экшт в виде объекта
-// action = {
-//     type: "ADD_TOKEN",
-//     payload: 
-// }
-
-//экшн в виде функции, в которую удобно отправить параметр (не обязательно создавать с аргументом)
-export function addToken(token){
-    return {type: ADD_TOKEN, payload: token}
-}
-export function deleteToken() { //вызывать будет без аргументов дабы передать пустую строчку для отчистки токена в сторе
-    return {type: DELETE_TOKEN, payload: ""}
-}
-
-const reducer = (state = defaultUserInformation, action) => {
-    switch(action.type) {
-        case "ADD_TOKEN":
-            return{ ...state, tokenAutorization: action.payload}
-        case "DELETE_TOKEN":
-            return{...state, tokenAutorization: action.payload}
-        default:
-            return state;
-    }
-}
-
-export const store = createStore(reducer);
 
 const router = createBrowserRouter([
     {

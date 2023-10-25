@@ -12,10 +12,10 @@ import Box from '@mui/material/Box';
 
 import { useSelector, useDispatch } from 'react-redux';
 
-import { addToken, deleteToken } from "./index";
+import { addToken } from './store/userReducer'
 
 function App() {
-  const [movies, setMovies] = useState(null); //храним данные о фильмах с сервера (будет объект)
+  //const [movies, setMovies] = useState(null); //храним данные о фильмах с сервера (будет объект)
   const [isLoadDataCards, setIsLoadDataCards] = useState(false);
   const [favoriteFilms, setFavoriteFilms] = useState(null); //храним данные о избранных фильмах
   const [isLoadFavoriteFilms, setIsLoadFavoriteFilms] = useState(false); //избранные фильмы загружены?
@@ -37,9 +37,14 @@ function App() {
   }
 
   const dispatch = useDispatch();
-  const tokenStore = useSelector(state => state.tokenAutorization); //получаем токен из стора КАЖДЫЙ РАЗ, КОГДА ОН ГДЕ-ТО ИЗМЕНИТСЯ!!! например удалится если мы разлогинимся
+  const tokenStore = useSelector(state => state.user.tokenAutorization); //получаем токен из стора КАЖДЫЙ РАЗ, КОГДА ОН ГДЕ-ТО ИЗМЕНИТСЯ!!! например удалится если мы разлогинимся
   console.log('Вот на токен из редакса!', tokenStore);
 
+
+  //!!!!!!!!!!!ПОДПИСЫВАЕМСЯ НА ИЗМЕНЕНИЯ MOVIES КАК ПРЯМ В USESTATE, И ПРИ СМЕНЕ БУДЕТ ПЕРЕРЕНДЕР И ОТРИСУЕТСЯ ЗАНОВО 
+  const movies = useSelector(state => state.movies.movies);
+
+  
   //если мы не авторизованы       if(!isLogin) {}     то есть токен в куках пустой, то отображаем пустое окно и header + значек авторизации справа сверху как 
   useEffect(() => { //ОБЯЗАТЕЛЬНО НУЖЕН USEEFFECT, ИНАЧЕ ПОЛУЧИМ ЗАЦИКЛЕННЫЕ РЕНДЕР (ИЗМЕНЕНИЕ СТЕЙТА ПОРОЖДАЕТ ПЕРЕРЕНДЕР)
     //checkTokenCookie() ? setIsLogin(true) : setIsLogin(false); 
@@ -85,10 +90,6 @@ function App() {
     dispatch(addToken(getTokenCookie())); //сохранить токен в сторе
 
 
-
-
-
-
     //флаг авторизации на войденный если токен был введен!!!
     if(checkTokenCookie()){
       setIsLogin(true); //ставим флаг, что мы АВТОРИЗОВАНЫ  
@@ -119,7 +120,7 @@ function App() {
         <Header head={'Фильмы'} isLogin={isLogin} setIsLogin={setIsLogin}/>     
         <div className="filtr-cards_film">
           <div className="move-filter-container">
-            <MoveFilter movies={movies} setMovies={setMovies} setIsLoadDataCards = {setIsLoadDataCards} />
+            <MoveFilter setIsLoadDataCards = {setIsLoadDataCards} />
           </div>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
             <CircularProgress />
@@ -128,6 +129,7 @@ function App() {
       </>
     )
   }
+
   
   return (
     <>
@@ -135,8 +137,6 @@ function App() {
       <div className="filtr-cards_film">
         <div className="move-filter-container">
           <MoveFilter 
-            movies={movies} 
-            setMovies={setMovies} 
             setIsLoadDataCards = {setIsLoadDataCards} 
             page = {page} 
             setPage = {setPage} 
